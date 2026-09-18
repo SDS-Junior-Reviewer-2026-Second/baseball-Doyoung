@@ -10,25 +10,45 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Configure AWS Credentials
+        # You may pin to the exact commit or the version.
+        # uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          # AWS Region, e.g. us-east-2
+          aws-region: ap-northeast-2
+          # AWS Access Key ID. Provide this key if you want to assume a role using access keys rather than a web identity token.
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          # AWS Secret Access Key. Required if aws-access-key-id is provided.
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
+      - name: Send e-mail with AWS SES
+        run: |
+          aws ses send-email \
+          --from "mincoding@naver.com" \
+          --destination "ToAddresses=sejin.choi@mincoding.co.kr" \
+          --message "Subject={Data=테스트 메일 전송},Body={Text={Data=사람이 가장 냉정해지는 시간 퇴근까지 1시간 49분 전}}"
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     # - name: Update dependency graph
