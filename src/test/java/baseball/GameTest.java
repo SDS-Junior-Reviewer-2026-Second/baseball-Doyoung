@@ -72,7 +72,7 @@ public class GameTest {
     @Test
     public void 볼만_있을_경우_0_strike_1_ball() {
         QueryResult expected = new QueryResult(false, 1, 0);
-        QueryResult actual = game.query("312");
+        QueryResult actual = game.query("516");
 
         assertEquals(expected, actual);
     }
