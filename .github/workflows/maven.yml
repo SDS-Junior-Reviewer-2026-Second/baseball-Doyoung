@@ -32,6 +32,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Configure AWS Credentials
+        if: failure()
         # You may pin to the exact commit or the version.
         # uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd
         uses: aws-actions/configure-aws-credentials@v6.3.0
@@ -44,6 +45,7 @@ jobs:
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
 
       - name: Send e-mail with AWS SES
+        if: failure()
         run: |
           aws ses send-email \
           --from "mincoding@naver.com" \
