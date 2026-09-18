@@ -2,6 +2,7 @@ package baseball;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import javax.management.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,11 +62,26 @@ public class GameTest {
     }
 
     @Test
-    public void 스트라이크만_있을_경우_1_strike_0_ball() {}
+    public void 스트라이크만_있을_경우_1_strike_0_ball() {
+        QueryResult expected = new QueryResult(false, 0, 1);
+        QueryResult actual = game.query("528");
+
+        assertEquals(expected, actual);
+    }
 
     @Test
-    public void 볼만_있을_경우_0_strike_1_ball() {}
+    public void 볼만_있을_경우_0_strike_1_ball() {
+        QueryResult expected = new QueryResult(false, 1, 0);
+        QueryResult actual = game.query("516");
+
+        assertEquals(expected, actual);
+    }
 
     @Test
-    public void 볼과_스트라이크가_함께_있을_경우_1_strike_1_ball() {}
+    public void 볼과_스트라이크가_함께_있을_경우_1_strike_1_ball() {
+        QueryResult expected = new QueryResult(false, 1, 1);
+        QueryResult actual = game.query("152");
+
+        assertEquals(expected, actual);
+    }
 }
