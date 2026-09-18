@@ -1,7 +1,5 @@
 package baseball;
 
-import java.text.NumberFormat;
-
 class QueryResult {
 
     public boolean solved;
@@ -49,7 +47,8 @@ class QueryResult {
 
 public class Game {
 
-    private int[] answer = { 0, 0, 0 };
+    private final int ANSWER_SIZE = 3;
+    private int[] answer = new int[ANSWER_SIZE];
 
     public void setAnswer(String answer) {
         this.answer = parseAnswer(answer);
@@ -59,6 +58,15 @@ public class Game {
         QueryResult result = new QueryResult(false, 0, 0);
         int[] parsed = parseAnswer(numbers);
 
+        if (hasDuplicate(parsed) || hasZero(parsed)) {
+            throw new IllegalArgumentException("illegal answer: " + numbers);
+        }
+
+        makeResult(result, parsed);
+        return result;
+    }
+
+    private void makeResult(QueryResult result, int[] parsed) {
         for (int i = 0; i < 3; i++) {
             if (answer[i] == parsed[i]) {
                 result.strikes++;
@@ -74,38 +82,40 @@ public class Game {
         if (result.strikes == 3) {
             result.solved = true;
         }
-
-        return result;
     }
 
     private int[] parseAnswer(String answer) {
-        int[] result = { 0, 0, 0 };
-        int parsed;
+        int[] result = new int[ANSWER_SIZE];
+        int number;
 
         try {
-            parsed = Integer.parseInt(answer);
+            number = Integer.parseInt(answer);
         } catch (NumberFormatException exception) {
             throw new IllegalArgumentException("illegal answer: " + answer);
         }
 
-        result[2] = parsed % 10;
-        result[1] = (parsed / 10) % 10;
-        result[0] = parsed / 100;
+        result[2] = number % 10;
+        result[1] = (number / 10) % 10;
+        result[0] = number / 100;
 
-        if (
-            result[0] == result[1] ||
-            result[1] == result[2] ||
-            result[2] == result[0]
-        ) {
-            throw new IllegalArgumentException("illegal answer: " + answer);
-        }
+        return result;
+    }
 
+    private boolean hasDuplicate(int[] numbers) {
+        return (
+            numbers[0] == numbers[1] ||
+            numbers[1] == numbers[2] ||
+            numbers[2] == numbers[0]
+        );
+    }
+
+    private boolean hasZero(int[] numbers) {
         for (int i = 0; i < 3; i++) {
-            if (result[i] == 0) {
-                throw new IllegalArgumentException("illegal answer: " + answer);
+            if (numbers[i] == 0) {
+                return true;
             }
         }
 
-        return result;
+        return false;
     }
 }
